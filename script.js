@@ -1,4 +1,3 @@
-
 const canvas = document.getElementById("game");
 const ctx = canvas.getContext("2d");
 
@@ -10,6 +9,14 @@ const H = canvas.height;
 let playerY = H - 60;  
 let jump = false;      
 let jumpHeight = 0;  
+
+const PlayerRun = new Image ();
+PlayerRun.src="Walking-Green-Pants.png"
+
+const PlayerJump = new Image ();
+PlayerJump.src="Jumping-Green-Pants.png"
+
+
 
 function game() {
   ctx.clearRect(0, 0, W, H); 
@@ -29,8 +36,12 @@ function game() {
   }
 
  
-  ctx.fillStyle = "black";
-  ctx.fillRect(50, playerY, 30, 40);
+ if (jump){
+  ctx.drawImage(PlayerJump,50,playerY,50,50);
+ }else{
+  ctx.drawImage(PlayerRun,50,playerY,50,50);
+
+ }
 
   requestAnimationFrame(game); 
 }
@@ -41,6 +52,10 @@ document.addEventListener("keydown", (e) => {
     jump = true;
   }
 });
+
+PlayerRun.onload = PlayerJump.onload = () => {
+  game(); 
+};
 
 
 game();
