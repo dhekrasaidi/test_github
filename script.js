@@ -10,6 +10,9 @@ let playerY = H - 60;
 let jump = false;      
 let jumpHeight = 0;  
 
+let score = 0;
+let bestScore = 0;
+
 const PlayerRun = new Image ();
 PlayerRun.src="Walking-Green-Pants.png"
 
@@ -43,6 +46,13 @@ function game() {
 
  }
 
+  score++;
+  ctx.fillStyle = "black";
+  ctx.font = "20px Arial";
+  ctx.fillText("Score: " + score, 10, 25);
+  ctx.fillText("Best: " + bestScore, 10, 50);
+
+
   requestAnimationFrame(game); 
 }
 
@@ -57,5 +67,3 @@ PlayerRun.onload = PlayerJump.onload = () => {
   game(); 
 };
 
-
-game();
