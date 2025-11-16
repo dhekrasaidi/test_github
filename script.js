@@ -13,6 +13,17 @@ let jumpHeight = 0;
 let score = 0;
 let bestScore = 0;
 
+
+let obstacleX = W;
+let obstacleWidth = 40;
+let obstacleHeight = 50;
+let obstacleSpeed = 3;
+
+let obstacleImg = new Image();
+obstacleImg.src = "obstacle.png";
+
+
+
 const PlayerRun = new Image ();
 PlayerRun.src="Walking-Green-Pants.png"
 
@@ -45,12 +56,24 @@ function game() {
   ctx.drawImage(PlayerRun,50,playerY,50,50);
 
  }
+ 
+ //obstacle
+let offsetY = 10; 
+ctx.drawImage(obstacleImg, obstacleX, H - 20 - obstacleHeight + offsetY, obstacleWidth, obstacleHeight);
+
+obstacleX -= obstacleSpeed;
+
+if (obstacleX + obstacleWidth < 0) {
+    obstacleX = W;
+}
+
 
   score++;
   ctx.fillStyle = "black";
   ctx.font = "20px Arial";
   ctx.fillText("Score: " + score, 10, 25);
-  ctx.fillText("Best: " + bestScore, 10, 50);
+  ctx.fillText("Best Score : " + bestScore, 10, 50);
+  
 
 
   requestAnimationFrame(game); 
