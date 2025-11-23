@@ -11,10 +11,18 @@ let jump = false;
 let jumpHeight = 0;  
 
 let score = 0;
-let bestScore = 0;
+let bestScore = localStorage.getItem("bestScore") 
+  ? parseInt(localStorage.getItem("bestScore")) 
+  : 0;
 
 
-let obstacleX = W;
+
+let obstacles = [
+  { x: W, width: 40, height: 50, speed: 3 },
+  { x: W + 300, width: 40, height: 50, speed: 3 },
+  { x: W + 600, width: 40, height: 50, speed: 3 }
+];
+
 let obstacleWidth = 40;
 let obstacleHeight = 50;
 let obstacleSpeed = 3;
@@ -59,21 +67,69 @@ function game() {
  
  //obstacle
 let offsetY = 10; 
-ctx.drawImage(obstacleImg, obstacleX, H - 20 - obstacleHeight + offsetY, obstacleWidth, obstacleHeight);
+obstacles.forEach(ob => {
+    ctx.drawImage(
+        obstacleImg,
+        ob.x,
+        H - 20 - ob.height + 10,
+        ob.width,
+        ob.height
+    );
 
-obstacleX -= obstacleSpeed;
+    ob.x -= ob.speed;
+    if (ob.x + ob.width < 0) {
+    ob.x = W + Math.random() * 300;
 
-if (obstacleX + obstacleWidth < 0) {
-    obstacleX = W;
+   
+    score++;
+    if (score > bestScore) {
+        bestScore = score;
+        localStorage.setItem("bestScore", bestScore);
+    }
 }
 
+});
 
-  score++;
+
   ctx.fillStyle = "black";
   ctx.font = "20px Arial";
   ctx.fillText("Score: " + score, 10, 25);
   ctx.fillText("Best Score : " + bestScore, 10, 50);
   
+// collision
+let playerHitbox = {
+    x: 50 + 10,   
+    y: playerY + 5,
+    width: 30,
+    height: 45
+};
+
+let collision = false;
+
+obstacles.forEach(ob => {
+    let obstacleHitbox = {
+        x: ob.x + 8,
+        y: H - 20 - ob.height + 10 + 5,
+        width: ob.width - 15,
+        height: ob.height - 10
+    };
+
+    // Test collision  joueur x obstacle
+    if (
+        playerHitbox.x < obstacleHitbox.x + obstacleHitbox.width &&
+        playerHitbox.x + playerHitbox.width > obstacleHitbox.x &&
+        playerHitbox.y < obstacleHitbox.y + obstacleHitbox.height &&
+        playerHitbox.y + playerHitbox.height > obstacleHitbox.y
+    ) {
+        collision = true;
+    }
+});
+
+if (collision) {
+    alert("game over! press Space to REPLAY");
+    score = 0;
+    obstacles.forEach((ob, i) => ob.x = W + i * 300);
+}
 
 
   requestAnimationFrame(game); 

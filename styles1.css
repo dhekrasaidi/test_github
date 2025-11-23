@@ -1,6 +1,29 @@
 *{box-sizing:border-box;
 font-family:Arial, Helvetica, sans-serif
 }
+
+#gameOverBox {
+    position: absolute;
+    top: 30%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0,0,0,0.7);
+    padding: 30px;
+    border-radius: 20px;
+    color: white;
+    text-align: center;
+    animation: popup 0.5s ease;
+}
+
+.hidden {
+    display: none;
+}
+
+@keyframes popup {
+    from { transform: translateX(-50%) scale(0.5); opacity: 0; }
+    to { transform: translateX(-50%) scale(1); opacity: 1; }
+}
+
 body{
     display:flex;
     align-items:center;
