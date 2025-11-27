@@ -1,12 +1,23 @@
 const canvas = document.getElementById("game");
 const ctx = canvas.getContext("2d");
 
+//responsive design
+function resizeCanvas() {
+    const ratio = 800 / 300; // ratio de ton canvas original
+    let width = Math.min(window.innerWidth * 0.95, 800); // max 800px pour PC
+    let height = width / ratio;
+    canvas.width = width;
+    canvas.height = height;
+}
 
-const W = canvas.width;
-const H = canvas.height;
+window.addEventListener('resize', resizeCanvas);
+resizeCanvas();
 
 
-let playerY = H - 60;  
+//les variables 
+let speedIncrease = 0.002;//vitesse progressive
+
+let playerY = canvas.height - 60;  //position verticale du joueur
 let jump = false;      
 let jumpHeight = 0;  
 
@@ -16,11 +27,10 @@ let bestScore = localStorage.getItem("bestScore")
   : 0;
 
 
-
+//OBSTACLES
 let obstacles = [
-  { x: W, width: 40, height: 50, speed: 3 },
-  { x: W + 300, width: 40, height: 50, speed: 3 },
-  { x: W + 600, width: 40, height: 50, speed: 3 }
+  { x: canvas.width, width: 40, height: 50, speed: 3 },
+  { x: canvas.width+ 300, width: 40, height: 50, speed: 3 },
 ];
 
 let obstacleWidth = 40;
@@ -39,21 +49,21 @@ const PlayerJump = new Image ();
 PlayerJump.src="Jumping-Green-Pants.png"
 
 
-
+//loop du jeu
 function game() {
-  ctx.clearRect(0, 0, W, H); 
+  ctx.clearRect(0, 0, canvas.width, canvas.height);//clear canvas 
 
-
+//sol
   ctx.fillStyle = "green";
-  ctx.fillRect(0, H - 20, W, 20);
+  ctx.fillRect(0, canvas.height- 20, canvas.width, 20);
 
-
+//saut du joueur
   if (jump) {
     jumpHeight++;
-    playerY -= 10; 
-    if (jumpHeight > 15) jump = false;
-  } else if (playerY < H - 60) {
-    playerY += 10; 
+    playerY -= 7; // ralentit la montée
+    if (jumpHeight > 18) jump = false;// saut un peu plus long
+  } else if (playerY < canvas.height - 60) {
+    playerY += 3; // ralentit la descente
     jumpHeight = 0;
   }
 
@@ -71,14 +81,15 @@ obstacles.forEach(ob => {
     ctx.drawImage(
         obstacleImg,
         ob.x,
-        H - 20 - ob.height + 10,
+        canvas.height- 20 - ob.height + 10,
         ob.width,
         ob.height
     );
 
+    ob.speed += speedIncrease;
     ob.x -= ob.speed;
     if (ob.x + ob.width < 0) {
-    ob.x = W + Math.random() * 300;
+    ob.x =canvas.width+ Math.random() * 300;
 
    
     score++;
@@ -109,7 +120,7 @@ let collision = false;
 obstacles.forEach(ob => {
     let obstacleHitbox = {
         x: ob.x + 8,
-        y: H - 20 - ob.height + 10 + 5,
+        y: canvas.height- 20 - ob.height + 10 + 5,
         width: ob.width - 15,
         height: ob.height - 10
     };
@@ -128,7 +139,9 @@ obstacles.forEach(ob => {
 if (collision) {
     alert("game over! press Space to REPLAY");
     score = 0;
-    obstacles.forEach((ob, i) => ob.x = W + i * 300);
+    obstacles.forEach(ob => ob.speed = 3); // remettre la vitesse de base
+
+    obstacles.forEach((ob, i) => ob.x =canvas.width+ i * 300);
 }
 
 
@@ -137,11 +150,12 @@ if (collision) {
 
 
 document.addEventListener("keydown", (e) => {
-  if (e.code === "Space" && playerY >= H - 60) {
+  if (e.code === "Space" && playerY >= canvas.height- 60) {
     jump = true;
   }
 });
 
+//jeu commence quand les images sont chargées
 PlayerRun.onload = PlayerJump.onload = () => {
   game(); 
 };
